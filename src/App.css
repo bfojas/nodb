@@ -30,3 +30,19 @@
     transform: rotate(360deg);
   }
 }
+
+button {
+  height: 40px;
+  width: 80px;
+}
+
+.cardImage {
+
+}
+
+.cardContainer {
+  background-color: rgb(10, 106, 10);
+  height: 400px;
+  width: 100%;
+  padding: 10px
+}
