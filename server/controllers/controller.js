@@ -5,8 +5,8 @@ let data = require('../cards.json');
 const fullData = data.slice();
 
 module.exports = {
+    
     deal:  (req,res) => {
-        console.log('query',req.query)
         const {id} = req.query;
     
         let dealt = data.filter((card) =>{
@@ -14,27 +14,23 @@ module.exports = {
             ?  true
             :  false
         })
-        console.log('dealt',dealt)
         res.send(dealt)
     },
     hand: (req,res) => {
-        console.log('hand controller', req.body)
         hand.push(req.body)
         res.send(hand)
     },
     
     removeCard: (req,res) =>{
-        // console.log('rem',req.params.id)
-        const {image} = req.query;
+        console.log('rem',req.params.id)
+        const {id} = req.params;
         data = data.filter(val => {
-           return val.image !== image
+           return val.id !== id
         })
-        console.log('delete')
         res.send(data)
     },
 
     getOrigin: (req,res) =>{
-        console.log('full',fullData.length)
         res.send(fullData)
     },
 

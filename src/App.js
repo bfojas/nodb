@@ -4,6 +4,7 @@ import axios from 'axios';
 import DisplayHand from './components/DisplayHand';
 import ResetDeck from './components/ResetDeck';
 import Button from './components/Button'
+import Value from './components/Value'
 
 
 class App extends Component {
@@ -13,15 +14,15 @@ class App extends Component {
       hand: [],
       dealtCard: {},
       cardCount: 52,
-
+      image:"",
+      value: 0
     }
     this.dealCard = this.dealCard.bind(this);
     this.handReset = this.handReset.bind(this);
   }
 
   componentDidMount(){
-    // axios.get('api/cards',).then(res =>{
-    // })
+  
   }
   handReset(newd){
     console.log('reset hit', this.state)
@@ -29,7 +30,8 @@ class App extends Component {
       hand: [],
       cardCount:52,
       newDeck: newd,
-      dealt: {}
+      dealt: {},
+      value: 0
     })
     // axios.put(`/api/cards`, this.state.newDeck)
     // .then(res =>{
@@ -48,29 +50,36 @@ class App extends Component {
     
     //generate random card
     let randomId = Math.floor(Math.random()*(52-1)+1);
+    console.log('hand', randomId)
+    //compare random number to hand
+    // let goneCheck = this.state.hand.filter(val =>{
+        // return val[0].id === randomId
+    // })
+    // console.log('gone', goneCheck)
     //get random card
-    axios.get(`/api/cards?id=${randomId}`).then(
-      res =>{console.log('test',res.data);
+    // if (goneCheck.length <2){
+    axios.get(`/api/cards?id=${randomId}`).then(res =>{
       this.setState({
         dealt: res.data,
-        image: res.data.image
+        image: res.data[0].image,
+        value: this.state.value + parseInt(res.data[0].value,10)
       })
-      let image = this.state.image
-      axios.post(`/api/hand`,this.state.dealt).then(res => {
+      console.log('value', res.data)
+      axios.post(`/api/hand/`,this.state.dealt).then(res => {
         this.setState({
           hand: res.data
         })
-        axios.delete(`/api/cards/?image=${image}`).then(res =>{
+        
+        axios.delete(`/api/cards/${randomId}`).then(res =>{
           this.setState({
             cardCount: res.data.length
           })
-    
         })
-      // })
     })
-
-
-  })}
+  })
+// }
+  // else{null}
+}
   // reset(){
   //   axios.get(`/api/reset`).then(res =>{
   //     this.setState({
@@ -89,15 +98,17 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-        <div className="cardContainer">
-        <DisplayHand data={hand}/>
-        </div>
-        <div>
-        <Button click={this.dealCard} title="Deal"/>
-        <ResetDeck handReset={this.handReset}/>
-        </div>
-
+        <Value value={this.state.value}/>
+          Shall we play a game?
+          <div className="cardContainer">
+            <DisplayHand data={hand}/>
+          </div>
+          <div>
+            <Button click={this.dealCard} title="Deal"/>
+            <ResetDeck handReset={this.handReset}/>
+            </div>
         </header>
+
       </div>
     );
   }
