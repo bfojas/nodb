@@ -15,98 +15,116 @@ class App extends Component {
       dealtCard: {},
       cardCount: 52,
       image:"",
-      value: 0
+      value: 0,
+      buttonDisabled: false,
+      aceCount: 0,
+      dealer: 0
     }
     this.dealCard = this.dealCard.bind(this);
     this.handReset = this.handReset.bind(this);
+    this.buttonReset = this.buttonReset.bind(this);
+    this.dealerPlay = this.dealerPlay.bind(this);
   }
 
   componentDidMount(){
-  
+    let dealerStart = Math.floor(Math.random()*(11-2)+2);
+   this.setState({
+     dealer: dealerStart
+   })
   }
   handReset(newd){
-    console.log('reset hit', this.state)
+    let dealerStart = Math.floor(Math.random()*(11-2)+2);
     this.setState({
       hand: [],
       cardCount:52,
       newDeck: newd,
       dealt: {},
-      value: 0
+      value: 0,
+      aceCount: 0,
+      dealer: dealerStart
     })
-    // axios.put(`/api/cards`, this.state.newDeck)
-    // .then(res =>{
-    // })
-    console.log('app reset', this.state)
   }
-  // makeHand(){
-  //   axios.post('api/cards', card).then(res =>{
-  //     this.setState({
-  //       hand: res
-  //     })
-  //   })
 
-  // }
+  dealerPlay(){
+    let dealerHand = this.state.dealer
+    while (dealerHand <17){
+      let card = Math.floor(Math.random()*(10-1)+1)
+      dealerHand += card
+    }
+    this.setState({
+      dealer: dealerHand,
+      buttonDisabled: true
+    })
+  }
   dealCard(){
-    
     //generate random card
-    let randomId = Math.floor(Math.random()*(52-1)+1);
-    console.log('hand', randomId)
+    let randomId = Math.floor(Math.random()*(this.state.cardCount-1)+1);
     //compare random number to hand
-    // let goneCheck = this.state.hand.filter(val =>{
-        // return val[0].id === randomId
-    // })
-    // console.log('gone', goneCheck)
-    //get random card
-    // if (goneCheck.length <2){
     axios.get(`/api/cards?id=${randomId}`).then(res =>{
+      let aceTrue = 0
+      if (parseInt(res.data[0].value) === 11) {aceTrue = 1
+       }else {aceTrue = 0}
+      let dealtValue =  parseInt(res.data[0].value,10);
+      if (dealtValue + this.state.value > 21 && (aceTrue >0 || this.state.aceCount >0))
+      {dealtValue -= 10
+       aceTrue -=1
+      }
+
       this.setState({
         dealt: res.data,
         image: res.data[0].image,
-        value: this.state.value + parseInt(res.data[0].value,10)
+        aceCount: this.state.aceCount + aceTrue,
+        value: this.state.value + dealtValue,
+        cardCount: this.state.cardCount-1
       })
-      console.log('value', res.data)
       axios.post(`/api/hand/`,this.state.dealt).then(res => {
         this.setState({
           hand: res.data
         })
         
-        axios.delete(`/api/cards/${randomId}`).then(res =>{
+        axios.delete(`/api/cards?id=${randomId}`).then(res =>{
           this.setState({
             cardCount: res.data.length
           })
+          let {value} = this.state  
+          value >= 21
+          ? this.setState({buttonDisabled: true})
+          : this.setState({buttonDisabled: false})
         })
-    })
-  })
-// }
-  // else{null}
-}
-  // reset(){
-  //   axios.get(`/api/reset`).then(res =>{
-  //     this.setState({
+      })
+    }
+      
+    )
+  }
 
-  //     })
-  //   })
-
-  // }
-
-
+  buttonReset(){
+    this.setState({buttonDisabled: false})
+  }
+    
 
   render() {
-    let {hand} = this.state;
+    let {hand, buttonDisabled} = this.state;
     // let {cardCount} = this.state;
     // console.log('render',data)
     return (
       <div className="App">
         <header className="App-header">
-        <Value value={this.state.value}/>
-          Shall we play a game?
-          <div className="cardContainer">
-            <DisplayHand data={hand}/>
-          </div>
           <div>
-            <Button click={this.dealCard} title="Deal"/>
-            <ResetDeck handReset={this.handReset}/>
+            <div className="dealer">
+            Shall we play a game? 
             </div>
+            <Value value={this.state.value} dealer={this.state.dealer}/>
+          </div>
+          <div className="table">
+            <div className="cardContainer">
+              <DisplayHand data={hand}/>
+            </div>
+          </div>
+          <div className="buttonContainers">
+            <Button click={this.dealCard} title="DEAL" disable={buttonDisabled}/>
+            <Button click={this.dealerPlay} title="STAY" disable={false}/>
+            <ResetDeck handReset={this.handReset} buttonReset={this.buttonReset}/>
+          </div>
         </header>
 
       </div>

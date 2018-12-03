@@ -2,9 +2,9 @@ import React from 'react';
 // import axios from 'axios';
 
 export default function Button(props){
-    let {click,title} = props
+    let {click,title,disable} = props
     return(
-        <button onClick={click}>{title}</button>
+        <button onClick={click} disabled={disable}>{title}</button>
         
     )
 

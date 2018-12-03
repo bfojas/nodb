@@ -8,12 +8,16 @@ module.exports = {
     
     deal:  (req,res) => {
         const {id} = req.query;
-    
-        let dealt = data.filter((card) =>{
-            return card.id === id
-            ?  true
-            :  false
-        })
+        console.log('reqquiry',data[1])
+        console.log('id', parseInt(id,10))
+        let dealt = [data[id]]
+        console.log('dealt',dealt)
+        
+        // filter((card) =>{
+        //     return card.id === id
+        //     ?  true
+        //     :  false
+        // })
         res.send(dealt)
     },
     hand: (req,res) => {
@@ -22,11 +26,15 @@ module.exports = {
     },
     
     removeCard: (req,res) =>{
-        console.log('rem',req.params.id)
-        const {id} = req.params;
-        data = data.filter(val => {
-           return val.id !== id
+        const {id} = req.query;
+        let dealt = parseInt(id)
+
+        data = data.filter((val,i) => {
+            let match = parseInt(val.id)
+           return match !== dealt
         })
+        console.log(data)
+        console.log('dealt',dealt)
         res.send(data)
     },
 

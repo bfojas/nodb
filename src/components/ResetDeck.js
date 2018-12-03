@@ -12,7 +12,7 @@ class ResetDeck extends Component{
         this.getOrigin = this.getOrigin.bind(this);
     }
     getOrigin(){
-        
+        this.props.buttonReset()
         axios.get(`/api/reset`).then(res =>{
             
             this.setState({
@@ -20,11 +20,9 @@ class ResetDeck extends Component{
             })
         let {original} = this.state
         axios.put(`/api/reset`,{original}).then(res =>{
-            console.log('get original', original)
             this.setState({
                 newDeck: res.body
             })
-            console.log('reset state', this.state.original)
             this.props.handReset(original)
             
         })
@@ -36,9 +34,9 @@ class ResetDeck extends Component{
     render(){
 
         return(
-            <div>
-                <Button click={this.getOrigin} title="Reset"/>
-            </div>
+            
+                <Button click={this.getOrigin} title="RESET" disable={false}/>
+            
 
             )}
 }

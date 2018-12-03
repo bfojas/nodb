@@ -23,7 +23,7 @@ app.get(`/api/reset`, controller.getOrigin);
 // app.put(`/api/cards`, controller.fresh)
 app.put(`/api/reset`, controller.newDeck);
 app.post(`/api/hand/`, controller.hand);
-app.delete(`/api/cards/:id`, controller.removeCard);
+app.delete(`/api/cards`, controller.removeCard);
 
 
 
