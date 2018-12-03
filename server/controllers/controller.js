@@ -47,7 +47,8 @@ module.exports = {
         data = req.body.original.slice()
        res.send(data)
         // console.log(req.body)
-    }
+    },
+
     // ,
     // fresh: (req,res) =>{
     //     console.log('newdeck body',req.body.original.length)

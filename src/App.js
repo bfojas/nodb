@@ -18,12 +18,14 @@ class App extends Component {
       value: 0,
       buttonDisabled: false,
       aceCount: 0,
-      dealer: 0
+      dealer: 0,
+      beer:{name:"Get a drink?"}
     }
     this.dealCard = this.dealCard.bind(this);
     this.handReset = this.handReset.bind(this);
     this.buttonReset = this.buttonReset.bind(this);
     this.dealerPlay = this.dealerPlay.bind(this);
+    this.getBeer = this.getBeer.bind(this);
   }
 
   componentDidMount(){
@@ -101,6 +103,15 @@ class App extends Component {
     this.setState({buttonDisabled: false})
   }
     
+  getBeer(){
+    axios.get("https://api.punkapi.com/v2/beers/").then (res =>{
+      let randomBeer = Math.floor(Math.random() * (25-1)+1)
+      this.setState({
+        beer: res.data[randomBeer],
+        beerTrue: true
+      })
+    })
+  }
 
   render() {
     let {hand, buttonDisabled} = this.state;
@@ -109,21 +120,31 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <div>
-            <div className="dealer">
-            Shall we play a game? 
-            </div>
-            <Value value={this.state.value} dealer={this.state.dealer}/>
+          <div className="topContainer">
+              <Value value={this.state.value} dealer={this.state.dealer}/>
           </div>
           <div className="table">
             <div className="cardContainer">
               <DisplayHand data={hand}/>
             </div>
           </div>
-          <div className="buttonContainers">
-            <Button click={this.dealCard} title="DEAL" disable={buttonDisabled}/>
-            <Button click={this.dealerPlay} title="STAY" disable={false}/>
-            <ResetDeck handReset={this.handReset} buttonReset={this.buttonReset}/>
+          <div className="bottomContainer">
+            <div className="beerContainer">
+              <img className="beerPic" src={this.state.beer.image_url} />
+              <div className="beerName">
+                {this.state.beer.name}
+              </div>
+            </div> 
+            <div className="buttonContainers">
+              <div className="cardButtons">
+                <Button click={this.dealCard} title="DEAL" disable={buttonDisabled}/>
+                <Button click={this.dealerPlay} title="STAY" disable={false}/>
+                <ResetDeck handReset={this.handReset} buttonReset={this.buttonReset}/>
+              </div>
+              <div className="drinkButtons">
+                <Button click={this.getBeer} title="Get Drink" disable={false} />
+              </div> 
+            </div>
           </div>
         </header>
 

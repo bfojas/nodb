@@ -18,12 +18,12 @@ app.use(bodyParser.json());
 
 
 // )
-app.get(`/api/cards`, controller.deal);
-app.get(`/api/reset`, controller.getOrigin);
+app.get('/api/cards', controller.deal);
+app.get('/api/reset', controller.getOrigin);
 // app.put(`/api/cards`, controller.fresh)
-app.put(`/api/reset`, controller.newDeck);
-app.post(`/api/hand/`, controller.hand);
-app.delete(`/api/cards`, controller.removeCard);
+app.put('/api/reset', controller.newDeck);
+app.post('/api/hand/', controller.hand);
+app.delete('/api/cards', controller.removeCard);
 
 
 
